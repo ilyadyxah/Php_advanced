@@ -1,0 +1,12 @@
+{
+    "name": "admin/php2",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Admin\\": "src/"
+        }
+    },
+    "require": {
+        "fakerphp/faker": "^1.19"
+    }
+}
