@@ -1,12 +1,18 @@
 {
-    "name": "admin/php2",
-    "type": "project",
+    "name": "goshawork/course",
     "autoload": {
         "psr-4": {
-            "Admin\\": "src/"
+            "App\\": "src/"
         }
     },
+    "authors": [
+        {
+            "name": "Gosha Fadeev",
+            "email": "buthallk2@mail.ru"
+        }
+    ],
     "require": {
-        "fakerphp/faker": "^1.19"
+        "fakerphp/faker": "^1.19",
+      "ext-pdo": "*"
     }
 }
