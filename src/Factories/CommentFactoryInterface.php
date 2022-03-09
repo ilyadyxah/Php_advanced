@@ -2,4 +2,10 @@
 
 namespace App\Factories;
 
-interface CommentFactoryInterface extends FactoryInterface{}
+use App\Decorator\CommentDecorator;
+use App\Entities\Comment\CommentInterface;
+
+interface CommentFactoryInterface extends FactoryInterface
+{
+    public function create(CommentDecorator $commentDecorator): CommentInterface;
+}

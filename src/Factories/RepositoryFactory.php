@@ -4,9 +4,13 @@ namespace App\Factories;
 
 use App\Connections\ConnectorInterface;
 use App\Connections\SqlLiteConnector;
+use App\Entities\Article\Article;
+use App\Entities\Comment\Comment;
 use App\Entities\EntityInterface;
 use App\Entities\User\User;
+use App\Repositories\ArticleRepository;
 use App\Repositories\EntityRepositoryInterface;
+use App\Repositories\CommentRepository;
 use App\Repositories\UserRepository;
 use JetBrains\PhpStorm\Pure;
 
@@ -24,7 +28,8 @@ class RepositoryFactory implements RepositoryFactoryInterface
         return match ($entity::class)
         {
             User::class => new UserRepository($this->connector),
-            //Article::class => $this->createArticleRepository(),
+            Article::class => new ArticleRepository($this->connector),
+            Comment::class => new CommentRepository($this->connector),
         };
     }
 

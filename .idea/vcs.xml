@@ -2,9 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-<<<<<<< HEAD
-    <mapping directory="$PROJECT_DIR$/lesson2" vcs="Git" />
-=======
->>>>>>> 3c1b561 (Add lesson 2 base)
   </component>
 </project>

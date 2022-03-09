@@ -6,21 +6,23 @@ use App\Entities\User\User;
 
 class Article implements ArticleInterface
 {
+
+    private ?int $id = null;
+
     public function __construct(
-        private int $id,
-        private User $author,
+        private int $authorId,
         private string $title,
         private string $text,
     ) {}
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getAuthor(): User
+    public function getAuthor(): int
     {
-        return $this->author;
+        return $this->authorId;
     }
 
     public function getTitle(): string

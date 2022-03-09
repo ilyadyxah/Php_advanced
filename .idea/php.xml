@@ -8,8 +8,5 @@
       <path value="$PROJECT_DIR$/vendor/composer" />
     </include_path>
   </component>
-<<<<<<< HEAD
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
-=======
->>>>>>> 3c1b561 (Add lesson 2 base)
 </project>
