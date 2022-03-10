@@ -32,6 +32,35 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         );
     }
 
+    public function delete($id):void
+    {
+        /**
+         * @var User $entity
+         */
+        $statement =  $this->connector->getConnection()
+            ->prepare("DELETE FROM users WHERE `id` = :id");
+
+        $statement->execute(
+            [
+                ':id' => $id,
+            ]
+        );
+    }
+
+    public function getId($entity): string|int
+    {
+        $statement = $this->connector->getConnection()->prepare(
+            'SELECT id FROM users WHERE email = :email'
+        );
+
+        $statement->execute([
+            ':email' => (string)$entity->getEmail(),
+        ]);
+
+        return $statement->fetch(PDO::FETCH_ASSOC)['id'];
+    }
+
+
     /**
      * @throws UserNotFoundException
      */

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Entities\Comment\Comment;
 use App\Entities\EntityInterface;
+use App\Entities\User\User;
 use App\Exceptions\UserNotFoundException;
 use PDO;
 use PDOStatement;
@@ -30,6 +31,39 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
                 ':text' => $entity->getText(),
             ]
         );
+    }
+
+    public function delete($id):void
+    {
+        /**
+         * @var Comment $entity
+         */
+        $statement =  $this->connector->getConnection()
+            ->prepare("DELETE FROM comments WHERE `id` = :id");
+
+        $statement->execute(
+            [
+                ':id' => $id,
+            ]
+        );
+    }
+
+    public function getId($entity): string|int
+    {
+        /**
+         * @var Comment $entity
+         */
+        $statement = $this->connector->getConnection()->prepare(
+            'SELECT id FROM comments WHERE author_id = :authorId AND article_id = :articleId'
+        );
+
+        $statement->execute([
+            ':authorId' => (string)$entity->getAuthor(),
+            ':articleId' => (string)$entity->getArticle(),
+
+        ]);
+
+        return $statement->fetch(PDO::FETCH_ASSOC)['id'];
     }
 
     /**

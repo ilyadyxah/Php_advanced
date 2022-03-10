@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Entities\Comment\Comment;
 use App\Entities\EntityInterface;
 use App\Entities\Article\Article;
 use App\Exceptions\UserNotFoundException;
@@ -30,6 +31,39 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
                 ':text' => $entity->getText(),
             ]
         );
+    }
+
+    public function delete($id):void
+    {
+        /**
+         * @var Article $entity
+         */
+        $statement =  $this->connector->getConnection()
+            ->prepare("DELETE FROM articles WHERE `id` = :id");
+
+        $statement->execute(
+            [
+                ':id' => $id,
+            ]
+        );
+    }
+
+    public function getId($entity): string|int
+    {
+        /**
+         * @var Article $entity
+         */
+        $statement = $this->connector->getConnection()->prepare(
+            'SELECT id FROM articles WHERE author_id = :authorId AND title = :title'
+        );
+
+        $statement->execute([
+            ':authorId' => (string)$entity->getAuthor(),
+            ':title' => (string)$entity->getTitle(),
+
+        ]);
+
+        return $statement->fetch(PDO::FETCH_ASSOC)['id'];
     }
 
     /**
