@@ -18,5 +18,4 @@ enum Argument:string
             Argument::COMMENT->value
         ];
     }
-
 }

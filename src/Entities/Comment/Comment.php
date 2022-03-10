@@ -7,26 +7,27 @@ use App\Entities\User\User;
 
 class Comment implements CommentInterface
 {
+    private ?int $id = null;
+
     public function __construct(
-        private int $id,
-        private User $author,
-        private Article $article,
+        private int $articleId,
+        private int $authorId,
         private string $text,
     ) {}
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getAuthor(): User
+    public function getAuthor(): int
     {
-        return $this->author;
+        return $this->authorId;
     }
 
-    public function getArticle(): Article
+    public function getArticle(): int
     {
-        return $this->article;
+        return $this->articleId;
     }
 
     public function getText(): string

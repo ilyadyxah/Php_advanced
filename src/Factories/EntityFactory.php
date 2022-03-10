@@ -2,6 +2,8 @@
 
 namespace App\Factories;
 
+use App\Decorator\ArticleDecorator;
+use App\Decorator\CommentDecorator;
 use App\Decorator\UserDecorator;
 use App\Entities\EntityInterface;
 use App\Enums\Argument;
@@ -23,7 +25,7 @@ class EntityFactory implements EntityFactoryInterface
     {
         $this->userFactory = $userFactory ?? new UserFactory();
         $this->articleFactory = $articleFactory ?? new ArticleFactory();
-        $this->commentFactory = $commentFactory ?? new CommentFactory();;
+        $this->commentFactory = $commentFactory ?? new CommentFactory();
     }
 
     /**
@@ -36,8 +38,8 @@ class EntityFactory implements EntityFactoryInterface
         return match ($entityType)
         {
             Argument::USER->value => $this->userFactory->create(new UserDecorator($arguments)),
-//            Argument::ARTICLE->value => $this->articleFactory->create(new ArticleDecorator($arguments)),
-//             Argument::COMMENT->value => $this->articleFactory->create(new CommentDecorator($arguments)),
+            Argument::ARTICLE->value => $this->articleFactory->create(new ArticleDecorator($arguments)),
+            Argument::COMMENT->value => $this->commentFactory->create(new CommentDecorator($arguments)),
             default => throw new MatchException(
                 sprintf(
                     "Аргумент должен содержать одно из перечисленных значений: '%s'.",
