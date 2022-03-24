@@ -2,27 +2,26 @@
 
 namespace App\Connections;
 
-use App\Config\SqlLiteConfig;
+use App\Config\MySqlConfig;
 
-class SqlLiteConnector extends Connector implements SqlLiteConnectorInterface
-{
+class MySqlConnector extends Connector implements MySqlConnectorInterface {
     public function getDsn(): string
     {
-        return SqlLiteConfig::DSN;
+        return MySqlConfig::DSN;
     }
 
     public function getUserName(): string
     {
-       return '';
+        return MySqlConfig::USERNAME;
     }
 
     public function getPassword(): string
     {
-        return '';
+        return MySqlConfig::PASSWORD;
     }
 
     public function getOptions(): array
     {
         return [];
     }
-}
+};

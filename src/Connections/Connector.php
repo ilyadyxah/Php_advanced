@@ -1,13 +1,27 @@
 <?php
 
 namespace App\Connections;
-use PDO;
+use App\Drivers\Connection;
+use App\Drivers\PdoConnectionDriver;
+use PDOException;
 
 abstract class Connector implements ConnectorInterface
 {
-    public function getConnection():PDO
+    public function getConnection():Connection
     {
-        return new PDO($this->getDsn(), $this->getUserName(), $this->getPassword(), $this->getOptions());
+        try {
+            $dbh = PdoConnectionDriver::getInstance(
+                $this->getDsn(),
+                $this->getUserName(),
+                $this->getPassword(),
+                $this->getOptions()
+            );
+        } catch (PDOException $e) {
+            print "Error!: " . $e->getMessage();
+            die();
+        }
+
+        return $dbh;
     }
 
     abstract public function getDsn():string;

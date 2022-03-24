@@ -6,7 +6,7 @@ use App\Entities\EntityInterface;
 use App\Exceptions\CommandException;
 use App\Repositories\EntityRepositoryInterface;
 
-class CreateCommand
+class DeleteCommand
 {
     private EntityRepositoryInterface $entityRepository;
 
@@ -20,10 +20,11 @@ class CreateCommand
      */
     public function handle(EntityInterface $entity): void
     {
-        if ($this->entityRepository->getId($entity)) {
-            throw new CommandException(sprintf("%s already exists", get_class($entity)));
+        $itemId = $this->entityRepository->getId($entity);
+        if (!$itemId) {
+            throw new CommandException(sprintf("%s not exists", get_class($entity)));
         }
 
-        $this->entityRepository->save($entity);
+        $this->entityRepository->delete($itemId);
     }
 }

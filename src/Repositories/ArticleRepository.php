@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Entities\EntityInterface;
 use App\Entities\Article\Article;
-use App\Exceptions\UserNotFoundException;
+use App\Exceptions\ArticleNotFoundException;
 use PDO;
 use PDOStatement;
 
@@ -32,8 +32,41 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
         );
     }
 
+    public function delete($id):void
+    {
+        /**
+         * @var Article $entity
+         */
+        $statement =  $this->connector->getConnection()
+            ->prepare("DELETE FROM articles WHERE `id` = :id");
+
+        $statement->execute(
+            [
+                ':id' => $id,
+            ]
+        );
+    }
+
+    public function getId($entity): int
+    {
+        /**
+         * @var Article $entity
+         */
+        $statement = $this->connector->getConnection()->prepare(
+            'SELECT id FROM articles WHERE author_id = :authorId AND title = :title'
+        );
+
+        $statement->execute([
+            ':authorId' => (string)$entity->getAuthor(),
+            ':title' => (string)$entity->getTitle(),
+
+        ]);
+
+        return $statement->fetch(PDO::FETCH_ASSOC)['id'];
+    }
+
     /**
-     * @throws UserNotFoundException
+     * @throws ArticleNotFoundException
      */
     public function get(int $id): Article
     {
@@ -45,18 +78,17 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
             ':id' => (string)$id,
         ]);
 
-        return $this->getArticle($statement, $id);
+        return $this->getArticle($statement);
     }
 
     /**
-     * @throws UserNotFoundException
+     * @throws ArticleNotFoundException
      */
-    private function getArticle(PDOStatement $statement, int $articleId): Article
+    private function getArticle(PDOStatement $statement): Article
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if (false === $result) {
-            throw new UserNotFoundException(
-                sprintf("Cannot find user with id: %s", $articleId));
+            throw new ArticleNotFoundException("Cannot find article");
         }
 
         return new Article($result['author_id'], $result['title'], $result['text']);
