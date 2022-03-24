@@ -15,10 +15,13 @@ class CreateCommand
         $this->entityRepository = $entityRepository;
     }
 
+    /**
+     * @throws CommandException
+     */
     public function handle(EntityInterface $entity): void
     {
-        if ($entity->getId()) {
-            throw new CommandException(sprintf("%s already exists", $entity::class));
+        if ($this->entityRepository->getId($entity)) {
+            throw new CommandException(sprintf("%s already exists", get_class($entity)));
         }
 
         $this->entityRepository->save($entity);

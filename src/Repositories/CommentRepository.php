@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Entities\Comment\Comment;
 use App\Entities\EntityInterface;
 use App\Entities\User\User;
+use App\Exceptions\CommentNotFoundException;
 use App\Exceptions\UserNotFoundException;
 use PDO;
 use PDOStatement;
@@ -67,7 +68,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
     }
 
     /**
-     * @throws UserNotFoundException
+     * @throws CommentNotFoundException
      */
     public function get(int $id): Comment
     {
@@ -83,14 +84,14 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
     }
 
     /**
-     * @throws UserNotFoundException
+     * @throws CommentNotFoundException
      */
-    private function getComment(PDOStatement $statement, int $commentId): Comment
+    private function getComment(PDOStatement $statement): Comment
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if (false === $result) {
-            throw new UserNotFoundException(
-                sprintf("Cannot find user with id: %s", $commentId));
+            throw new CommentNotFoundException(
+                sprintf("Cannot find comment"));
         }
 
         return new Comment($result['article_id'], $result['author_id'], $result['text']);

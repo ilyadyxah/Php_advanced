@@ -2,10 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Entities\Comment\Comment;
 use App\Entities\EntityInterface;
 use App\Entities\Article\Article;
-use App\Exceptions\UserNotFoundException;
+use App\Exceptions\ArticleNotFoundException;
 use PDO;
 use PDOStatement;
 
@@ -48,7 +47,7 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
         );
     }
 
-    public function getId($entity): string|int
+    public function getId($entity): int
     {
         /**
          * @var Article $entity
@@ -67,7 +66,7 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
     }
 
     /**
-     * @throws UserNotFoundException
+     * @throws ArticleNotFoundException
      */
     public function get(int $id): Article
     {
@@ -79,18 +78,17 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
             ':id' => (string)$id,
         ]);
 
-        return $this->getArticle($statement, $id);
+        return $this->getArticle($statement);
     }
 
     /**
-     * @throws UserNotFoundException
+     * @throws ArticleNotFoundException
      */
-    private function getArticle(PDOStatement $statement, int $articleId): Article
+    private function getArticle(PDOStatement $statement): Article
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if (false === $result) {
-            throw new UserNotFoundException(
-                sprintf("Cannot find user with id: %s", $articleId));
+            throw new ArticleNotFoundException("Cannot find article");
         }
 
         return new Article($result['author_id'], $result['title'], $result['text']);

@@ -22,7 +22,7 @@ class DeleteCommand
     {
         $itemId = $this->entityRepository->getId($entity);
         if (!$itemId) {
-            throw new CommandException(sprintf("%s not exists", $itemId));
+            throw new CommandException(sprintf("%s not exists", get_class($entity)));
         }
 
         $this->entityRepository->delete($itemId);

@@ -10,8 +10,8 @@ use App\Factories\EntityManagerFactoryInterface;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-//$argv = ['cli.php', 'user', 'firstName=name1', 'lastName=name2', 'email=mailru'];
-$argv = ['cli.php', 'article', 'authorId=2', 'title=someTitle2', 'text=sometext'];
+//$argv = ['cli.php', 'user', 'firstName=name1', 'lastName=name2', 'email=mail2ru'];
+$argv = ['cli.php', 'article', 'authorId=2', 'title=someTitle', 'text=sometext'];
 //$argv = ['cli.php', 'comment', 'articleId=2', 'authorId=2', 'text=sometext2'];
 
 try {
@@ -28,8 +28,8 @@ try {
      */
     $entityManger = EntityManagerFactory::getInstance();
 
-    $commandCreate = new CreateCommand($entityManger->getRepositoryByInputArguments($argv));
-    $commandCreate->handle($entityManger->createEntityByInputArguments($argv));
+//    $commandCreate = new CreateCommand($entityManger->getRepositoryByInputArguments($argv));
+//    $commandCreate->handle($entityManger->createEntityByInputArguments($argv));
 
 
     $commandDelete = new DeleteCommand($entityManger->getRepositoryByInputArguments($argv));

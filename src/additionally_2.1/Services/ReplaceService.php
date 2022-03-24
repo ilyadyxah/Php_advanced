@@ -27,6 +27,8 @@ class ReplaceService
 
     public function replace(): string
     {
+        $array_text = explode(' ', $this->text);
+
         return str_replace($this->search, $this->replace, $this->text);
     }
 }
