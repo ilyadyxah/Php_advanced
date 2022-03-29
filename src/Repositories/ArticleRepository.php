@@ -47,7 +47,7 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
         );
     }
 
-    public function getId($entity): int
+    public function getId($entity): int|null
     {
         /**
          * @var Article $entity
@@ -56,13 +56,13 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
             'SELECT id FROM articles WHERE author_id = :authorId AND title = :title'
         );
 
-        $statement->execute([
+
+        $what = $statement->execute([
             ':authorId' => (string)$entity->getAuthor(),
             ':title' => (string)$entity->getTitle(),
 
         ]);
-
-        return $statement->fetch(PDO::FETCH_ASSOC)['id'];
+        return $statement->fetch(PDO::FETCH_ASSOC)['id'] ?? false;
     }
 
     /**
