@@ -2,7 +2,7 @@
 
 namespace App\Http\Actions\Article;
 
-use App\Commands\CreateCommand;
+use App\Commands\CreateArticleCommand;
 use App\Entities\Article\Article;
 use App\Exceptions\CommandException;
 use App\Exceptions\HttpException;
@@ -17,11 +17,11 @@ class CreateArticle implements ActionInterface
 {
     public function __construct(
         private ?ArticleRepository $repository = null,
-        private ?CreateCommand     $createCommand = null
+        private ?CreateArticleCommand $createCommand = null
     )
     {
         $this->repository = $this->repository ?? new ArticleRepository();
-        $this->createCommand = $this->createCommand ?? new CreateCommand($this->repository);
+        $this->createCommand = $this->createCommand ?? new CreateArticleCommand($this->repository);
     }
 
     public function handle(Request $request): Response

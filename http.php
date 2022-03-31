@@ -6,10 +6,11 @@ use App\Http\Actions\Article\FindArticleById;
 use App\Http\Actions\Comment\CreateComment;
 use App\Http\Actions\Comment\DeleteComment;
 use App\Http\Actions\Comment\FindCommentById;
+use App\Http\Actions\Like\AddLike;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 
-require_once __DIR__ . '/vendor/autoload.php';
+$container = require __DIR__ . '/bootstrap.php';
 
 $request = new Request(
     $_GET,
@@ -33,15 +34,16 @@ try {
 
 $routes = [
     'GET' => [
-        '/article/show' => new FindArticleById(),
-        '/comment/show' => new FindCommentById(),
+        '/article/show' => FindArticleById::class,
+        '/comment/show' => FindCommentById::class,
 
     ],
     'POST' => [
-        '/article/create' => new CreateArticle(),
-        '/article/delete' => new DeleteArticle(),
-        '/comment/create' => new CreateComment(),
-        '/comment/delete' => new DeleteComment(),
+        '/article/create' => CreateArticle::class,
+        '/article/delete' => DeleteArticle::class,
+        '/comment/create' => CreateComment::class,
+        '/comment/delete' => DeleteComment::class,
+        '/like/add' => AddLike::class,
     ],
 ];
 
@@ -55,8 +57,8 @@ if (!array_key_exists($path, $routes[$method])) {
     return;
 }
 
-// Выбираем действие по методу и пути
-$action = $routes[$method][$path];
+$actionClassName = $routes[$method][$path];
+$action = $container->get($actionClassName);
 
 try {
     $response = $action->handle($request);

@@ -1,8 +1,8 @@
 <?php
 
-namespace Repositories;
+namespace Tests\Repositories;
 
-use App\Commands\CreateCommand;
+use App\Commands\CreateCommentCommand;
 use App\config\SqlLiteConfig;
 use App\Connections\ConnectorInterface;
 use App\Drivers\Connection;
@@ -21,7 +21,7 @@ class CommentRepositoryTest extends TestCase
         $statementStub = $this->createStub(PDOStatement::class);
         $statementStub->method('fetch')->willReturn(false);
 
-        $repository = new CommentRepository($this->getConnectionStub());
+        $repository = new CommentRepository($this->getConnectionStub()->getConnection());
 
         $this->expectException(CommentNotFoundException::class);
         $this->expectExceptionMessage('Cannot find comment');
@@ -31,8 +31,8 @@ class CommentRepositoryTest extends TestCase
 
     public function testItSavesCommentToDatabase(): void
     {
-        $repository = new CommentRepository($this->getConnectionStub());
-        $createCommand = new CreateCommand($repository);
+        $repository = new CommentRepository($this->getConnectionStub()->getConnection());
+        $createCommand = new CreateCommentCommand($repository);
 
         $this->expectException(CommandException::class);
         $this->expectExceptionMessage('Comment already exists');

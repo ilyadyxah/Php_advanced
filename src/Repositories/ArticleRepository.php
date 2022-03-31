@@ -19,7 +19,7 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
         /**
          * @var Article $entity
          */
-        $statement =  $this->connector->getConnection()
+        $statement =  $this->connection
             ->prepare("INSERT INTO articles (author_id, title, text) 
                 VALUES (:author_id, :title, :text)");
 
@@ -37,7 +37,7 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
         /**
          * @var Article $entity
          */
-        $statement =  $this->connector->getConnection()
+        $statement =  $this->connection
             ->prepare("DELETE FROM articles WHERE `id` = :id");
 
         $statement->execute(
@@ -52,7 +52,7 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
         /**
          * @var Article $entity
          */
-        $statement = $this->connector->getConnection()->prepare(
+        $statement = $this->connection->prepare(
             'SELECT id FROM articles WHERE author_id = :authorId AND title = :title'
         );
 
@@ -70,7 +70,7 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
      */
     public function get(int $id): Article
     {
-        $statement = $this->connector->getConnection()->prepare(
+        $statement = $this->connection->prepare(
             'SELECT * FROM articles WHERE id = :id'
         );
 
@@ -91,6 +91,6 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
             throw new ArticleNotFoundException("Cannot find article");
         }
 
-        return new Article($result['author_id'], $result['title'], $result['text']);
+        return new Article(1, 1, 1);
     }
 }

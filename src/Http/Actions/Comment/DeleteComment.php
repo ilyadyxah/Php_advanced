@@ -2,7 +2,7 @@
 
 namespace App\Http\Actions\Comment;
 
-use App\Commands\DeleteCommand;
+use App\Commands\DeleteCommentCommand;
 use App\Entities\Comment\Comment;
 use App\Exceptions\CommandException;
 use App\Exceptions\HttpException;
@@ -17,11 +17,11 @@ class DeleteComment implements ActionInterface
 {
     public function __construct(
         private ?CommentRepository $repository = null,
-        private ?DeleteCommand     $deleteCommand = null
+        private ?DeleteCommentCommand     $deleteCommand = null
     )
     {
         $this->repository = $this->repository ?? new CommentRepository();
-        $this->deleteCommand = $this->deleteCommand ?? new DeleteCommand($this->repository);
+        $this->deleteCommand = $this->deleteCommand ?? new DeleteCommentCommand($this->repository);
     }
 
     public function handle(Request $request): Response

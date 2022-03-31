@@ -26,7 +26,6 @@ class FindArticleById implements ActionInterface
         } catch (HttpException $e) {
             return new ErrorResponse($e->getMessage());
         }
-
         try {
             $article = $this->repository->get($id);
         } catch (UserNotFoundException $e) {

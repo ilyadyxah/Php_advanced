@@ -2,7 +2,7 @@
 
 namespace App\Http\Actions\Comment;
 
-use App\Commands\CreateCommand;
+use App\Commands\CreateCommentCommand;
 use App\Entities\Comment\Comment;
 use App\Exceptions\CommandException;
 use App\Exceptions\HttpException;
@@ -17,11 +17,11 @@ class CreateComment implements ActionInterface
 {
     public function __construct(
         private ?CommentRepository $repository = null,
-        private ?CreateCommand     $createCommand = null
+        private ?CreateCommentCommand     $createCommand = null
     )
     {
         $this->repository = $this->repository ?? new CommentRepository();
-        $this->createCommand = $this->createCommand ?? new CreateCommand($this->repository);
+        $this->createCommand = $this->createCommand ?? new CreateCommentCommand($this->repository);
     }
 
     public function handle(Request $request): Response

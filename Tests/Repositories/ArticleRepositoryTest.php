@@ -1,8 +1,8 @@
 <?php
 
-namespace Repositories;
+namespace Tests\Repositories;
 
-use App\Commands\CreateCommand;
+use App\Commands\CreateArticleCommand;
 use App\config\SqlLiteConfig;
 use App\Connections\ConnectorInterface;
 use App\Drivers\Connection;
@@ -21,7 +21,7 @@ class ArticleRepositoryTest extends TestCase
         $statementStub = $this->createStub(PDOStatement::class);
         $statementStub->method('fetch')->willReturn(false);
 
-        $repository = new ArticleRepository($this->getConnectionStub());
+        $repository = new ArticleRepository($this->getConnectionStub()->getConnection());
 
         $this->expectException(ArticleNotFoundException::class);
         $this->expectExceptionMessage('Cannot find article');
@@ -31,8 +31,8 @@ class ArticleRepositoryTest extends TestCase
 
     public function testItSavesArticleToDatabase(): void
     {
-        $repository = new ArticleRepository($this->getConnectionStub());
-        $createCommand = new CreateCommand($repository);
+        $repository = new ArticleRepository($this->getConnectionStub()->getConnection());
+        $createCommand = new CreateArticleCommand($repository);
 
         $this->expectException(CommandException::class);
         $this->expectExceptionMessage('Article already exists');

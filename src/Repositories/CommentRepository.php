@@ -21,7 +21,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
         /**
          * @var Comment $entity
          */
-        $statement =  $this->connector->getConnection()
+        $statement =  $this->connection
             ->prepare("INSERT INTO comments (article_id, author_id, text) 
                 VALUES (:article_id, :author_id, :text)");
 
@@ -39,7 +39,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
         /**
          * @var Comment $entity
          */
-        $statement =  $this->connector->getConnection()
+        $statement =  $this->connection
             ->prepare("DELETE FROM comments WHERE `id` = :id");
 
         $statement->execute(
@@ -54,7 +54,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
         /**
          * @var Comment $entity
          */
-        $statement = $this->connector->getConnection()->prepare(
+        $statement = $this->connection->prepare(
             'SELECT id FROM comments WHERE author_id = :authorId AND article_id = :articleId'
         );
 
@@ -72,7 +72,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
      */
     public function get(int $id): Comment
     {
-        $statement = $this->connector->getConnection()->prepare(
+        $statement = $this->connection->prepare(
             'SELECT * FROM comments WHERE id = :id'
         );
 
