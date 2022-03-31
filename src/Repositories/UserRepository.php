@@ -57,7 +57,7 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
             ':email' => (string)$entity->getEmail(),
         ]);
 
-        return $statement->fetch(PDO::FETCH_ASSOC)['id'];
+        return $statement->fetch(PDO::FETCH_ASSOC)['id'] ?? false;
     }
 
 
