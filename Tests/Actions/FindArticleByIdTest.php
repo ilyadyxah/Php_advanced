@@ -1,19 +1,21 @@
 <?php
 
-namespace Actions;
+namespace Tests\Actions;
 
-use App\Entities\Comment\Comment;
+use App\Entities\Article\Article;
 use App\Entities\EntityInterface;
 use App\Exceptions\UserNotFoundException;
-use App\Http\Actions\Comment\FindCommentById;
+use App\Http\Actions\Article\FindArticleById;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\SuccessfulResponse;
-use App\Repositories\CommentRepositoryInterface;
+use App\Repositories\ArticleRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
-class FindCommentByIdTest extends TestCase
+class FindArticleByIdTest extends TestCase
 {
+    use LoggerTrait;
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
@@ -21,9 +23,9 @@ class FindCommentByIdTest extends TestCase
     public function testItReturnsErrorResponseIfNoIdProvided(): void
     {
         $request = new Request([], [], '');
-        $commentRepository = $this->getCommentRepository([]);
+        $articleRepository = $this->getArticleRepository([]);
 
-        $action = new FindCommentById($commentRepository);
+        $action = new FindArticleById($articleRepository, $this->getLogger());
         $response = $action->handle($request);
 
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -39,12 +41,12 @@ class FindCommentByIdTest extends TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testItReturnsErrorResponseIfCommentNotFound(): void
+    public function testItReturnsErrorResponseIfArticleNotFound(): void
     {
-        $request = new Request(['id' => '14'], [], '');
+        $request = new Request(['id' => '125'], [], '');
 
-        $commentRepository = $this->getCommentrepository([]);
-        $action = new FindCommentById($commentRepository);
+        $articleRepository = $this->getArticleRepository([]);
+        $action = new FindArticleById($articleRepository, $this->getLogger());
 
         $response = $action->handle($request);
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -59,17 +61,22 @@ class FindCommentByIdTest extends TestCase
      */
     public function testItReturnsSuccessfulResponse(): void
     {
-        $request = new Request(['id' => 0], [], '');
+        $request = new Request(['id' => '1'], [], '');
 
-        $commentRepository = $this->getCommentRepository([
-            new Comment(
+        $articleRepository = $this->getArticleRepository([
+            new Article(
                 '1',
+                'title',
+                'text'
+            ),
+            new Article(
                 '1',
+                'title',
                 'text'
             ),
         ]);
 
-        $action = new FindCommentById($commentRepository);
+        $action = new FindArticleById($articleRepository, $this->getLogger());
         $response = $action->handle($request);
 
         $this->assertInstanceOf(SuccessfulResponse::class, $response);
@@ -78,12 +85,12 @@ class FindCommentByIdTest extends TestCase
         $response->send();
     }
 
-    private function getCommentRepository(array $comments): CommentRepositoryInterface
+    private function getArticleRepository(array $articles): ArticleRepositoryInterface
     {
-        return new class($comments) implements CommentRepositoryInterface {
+        return new class($articles) implements ArticleRepositoryInterface {
 
             public function __construct(
-                private array $comments
+                private array $articles
             )
             {
             }
@@ -98,9 +105,9 @@ class FindCommentByIdTest extends TestCase
 
             public function get(int $id): EntityInterface
             {
-                foreach ($this->comments as $comment) {
-                    if ($comment instanceof Comment && $id === $comment->getId()) {
-                        return $comment;
+                foreach ($this->articles as $article) {
+                    if ($article instanceof Article && $id === $article->getId()) {
+                        return $article;
                     }
                 }
 

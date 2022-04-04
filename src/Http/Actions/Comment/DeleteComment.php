@@ -2,7 +2,7 @@
 
 namespace App\Http\Actions\Comment;
 
-use App\Commands\DeleteCommand;
+use App\Commands\DeleteCommentCommand;
 use App\Entities\Comment\Comment;
 use App\Exceptions\CommandException;
 use App\Exceptions\HttpException;
@@ -11,18 +11,14 @@ use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\Response;
 use App\Http\SuccessfulResponse;
-use App\Repositories\CommentRepository;
+use Psr\Log\LoggerInterface;
 
 class DeleteComment implements ActionInterface
 {
     public function __construct(
-        private ?CommentRepository $repository = null,
-        private ?DeleteCommand     $deleteCommand = null
-    )
-    {
-        $this->repository = $this->repository ?? new CommentRepository();
-        $this->deleteCommand = $this->deleteCommand ?? new DeleteCommand($this->repository);
-    }
+        private DeleteCommentCommand $deleteCommand,
+        private LoggerInterface $logger
+    ) {}
 
     public function handle(Request $request): Response
     {
@@ -35,6 +31,7 @@ class DeleteComment implements ActionInterface
 
             $this->deleteCommand->handle($comment);
         } catch (HttpException|CommandException $exception) {
+            $this->logger->warning($e->getMessage());
             return new ErrorResponse($exception->getMessage());
         }
 

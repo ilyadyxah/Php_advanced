@@ -13,7 +13,7 @@ class EntityManagerFactory extends Factory implements EntityManagerFactoryInterf
     private ?EntityFactoryInterface $entityFactory;
     private ?RepositoryFactoryInterface $repositoryFactory;
 
-    protected function __construct(
+    public function __construct(
         EntityFactoryInterface $entityFactory = null,
         RepositoryFactoryInterface $repositoryFactory = null
     )

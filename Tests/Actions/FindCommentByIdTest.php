@@ -1,19 +1,21 @@
 <?php
 
-namespace Actions;
+namespace Tests\Actions;
 
-use App\Entities\Article\Article;
+use App\Entities\Comment\Comment;
 use App\Entities\EntityInterface;
 use App\Exceptions\UserNotFoundException;
-use App\Http\Actions\Article\FindArticleById;
+use App\Http\Actions\Comment\FindCommentById;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\SuccessfulResponse;
-use App\Repositories\ArticleRepositoryInterface;
+use App\Repositories\CommentRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
-class FindArticleByIdTest extends TestCase
+class FindCommentByIdTest extends TestCase
 {
+    use LoggerTrait;
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
@@ -21,9 +23,9 @@ class FindArticleByIdTest extends TestCase
     public function testItReturnsErrorResponseIfNoIdProvided(): void
     {
         $request = new Request([], [], '');
-        $articleRepository = $this->getArticleRepository([]);
+        $commentRepository = $this->getCommentRepository([]);
 
-        $action = new FindArticleById($articleRepository);
+        $action = new FindCommentById($commentRepository, $this->getLogger());
         $response = $action->handle($request);
 
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -39,12 +41,12 @@ class FindArticleByIdTest extends TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testItReturnsErrorResponseIfArticleNotFound(): void
+    public function testItReturnsErrorResponseIfCommentNotFound(): void
     {
-        $request = new Request(['id' => '25'], [], '');
+        $request = new Request(['id' => '14'], [], '');
 
-        $articleRepository = $this->getArticleRepository([]);
-        $action = new FindArticleById($articleRepository);
+        $commentRepository = $this->getCommentrepository([]);
+        $action = new FindCommentById($commentRepository, $this->getLogger());
 
         $response = $action->handle($request);
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -61,15 +63,15 @@ class FindArticleByIdTest extends TestCase
     {
         $request = new Request(['id' => 0], [], '');
 
-        $articleRepository = $this->getArticleRepository([
-            new Article(
+        $commentRepository = $this->getCommentRepository([
+            new Comment(
                 '1',
-                'title',
+                '1',
                 'text'
             ),
         ]);
 
-        $action = new FindArticleById($articleRepository);
+        $action = new FindCommentById($commentRepository, $this->getLogger());
         $response = $action->handle($request);
 
         $this->assertInstanceOf(SuccessfulResponse::class, $response);
@@ -78,12 +80,12 @@ class FindArticleByIdTest extends TestCase
         $response->send();
     }
 
-    private function getArticleRepository(array $articles): ArticleRepositoryInterface
+    private function getCommentRepository(array $comments): CommentRepositoryInterface
     {
-        return new class($articles) implements ArticleRepositoryInterface {
+        return new class($comments) implements CommentRepositoryInterface {
 
             public function __construct(
-                private array $articles
+                private array $comments
             )
             {
             }
@@ -98,9 +100,9 @@ class FindArticleByIdTest extends TestCase
 
             public function get(int $id): EntityInterface
             {
-                foreach ($this->articles as $article) {
-                    if ($article instanceof Article && $id === $article->getId()) {
-                        return $article;
+                foreach ($this->comments as $comment) {
+                    if ($comment instanceof Comment && $id === $comment->getId()) {
+                        return $comment;
                     }
                 }
 

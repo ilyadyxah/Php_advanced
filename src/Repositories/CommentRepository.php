@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Drivers\Connection;
 use App\Entities\Comment\Comment;
 use App\Entities\EntityInterface;
 use App\Entities\User\User;
@@ -9,9 +10,20 @@ use App\Exceptions\CommentNotFoundException;
 use App\Exceptions\UserNotFoundException;
 use PDO;
 use PDOStatement;
+use Psr\Log\LoggerInterface;
 
 class CommentRepository extends EntityRepository implements CommentRepositoryInterface
 {
+    private LoggerInterface $logger;
+
+    public function __construct(
+        LoggerInterface $logger,
+        ?Connection     $connection = null
+    )
+    {
+        parent::__construct($connection);
+        $this->logger = $logger;
+    }
     /**
      * @param EntityInterface $entity
      * @return void
@@ -21,7 +33,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
         /**
          * @var Comment $entity
          */
-        $statement =  $this->connector->getConnection()
+        $statement =  $this->connection
             ->prepare("INSERT INTO comments (article_id, author_id, text) 
                 VALUES (:article_id, :author_id, :text)");
 
@@ -39,7 +51,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
         /**
          * @var Comment $entity
          */
-        $statement =  $this->connector->getConnection()
+        $statement =  $this->connection
             ->prepare("DELETE FROM comments WHERE `id` = :id");
 
         $statement->execute(
@@ -54,7 +66,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
         /**
          * @var Comment $entity
          */
-        $statement = $this->connector->getConnection()->prepare(
+        $statement = $this->connection->prepare(
             'SELECT id FROM comments WHERE author_id = :authorId AND article_id = :articleId'
         );
 
@@ -72,7 +84,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
      */
     public function get(int $id): Comment
     {
-        $statement = $this->connector->getConnection()->prepare(
+        $statement = $this->connection->prepare(
             'SELECT * FROM comments WHERE id = :id'
         );
 
@@ -90,6 +102,7 @@ class CommentRepository extends EntityRepository implements CommentRepositoryInt
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if (false === $result) {
+            $this->logger->error('Article not found');
             throw new CommentNotFoundException("Cannot find comment");
         }
 

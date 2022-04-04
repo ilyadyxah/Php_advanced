@@ -4,15 +4,14 @@ namespace App\Repositories;
 
 use App\Connections\ConnectorInterface;
 use App\Connections\SqlLiteConnector;
+use App\Drivers\Connection;
 use App\Entities\EntityInterface;
 
 abstract class EntityRepository implements EntityRepositoryInterface
 {
-    protected ConnectorInterface $connector;
-
-    public function __construct(ConnectorInterface $connector = null)
+    public function __construct(protected ?Connection $connection = null)
     {
-        $this->connector = $connector ?? new SqlLiteConnector();
+        $this->connection = $this->connection ?? (new SqlLiteConnector)->getConnection();
     }
 
     abstract public function save(EntityInterface $entity):void;

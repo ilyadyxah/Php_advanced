@@ -1,20 +1,21 @@
 <?php
 
-namespace Commands;
+namespace Tests\Commands;
 
-use App\Commands\DeleteCommand;
+use App\Commands\DeleteArticleCommand;
 use App\Entities\Article\Article;
 use App\Entities\EntityInterface;
 use App\Exceptions\ArticleNotFoundException;
 use App\Exceptions\CommandException;
 use App\Repositories\ArticleRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
 class DeleteCommandTest extends TestCase
 {
     public function testItThrowsAnExceptionWhenArticleNotExists(): void
     {
-        $createCommand = new DeleteCommand($this->makeArticleRepository());
+        $createCommand = new DeleteArticleCommand($this->makeArticleRepository());
 
         $this->expectException(CommandException::class);
         $this->expectExceptionMessage('Article not exist');

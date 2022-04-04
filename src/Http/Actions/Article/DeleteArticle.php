@@ -2,8 +2,7 @@
 
 namespace App\Http\Actions\Article;
 
-use App\Commands\CreateCommand;
-use App\Commands\DeleteCommand;
+use App\Commands\DeleteArticleCommand;
 use App\Entities\Article\Article;
 use App\Exceptions\CommandException;
 use App\Exceptions\HttpException;
@@ -12,18 +11,14 @@ use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\Response;
 use App\Http\SuccessfulResponse;
-use App\Repositories\ArticleRepository;
+use Psr\Log\LoggerInterface;
 
 class DeleteArticle implements ActionInterface
 {
     public function __construct(
-        private ?ArticleRepository $repository = null,
-        private ?DeleteCommand $deleteCommand = null
-    )
-    {
-        $this->repository = $this->repository ?? new ArticleRepository();
-        $this->deleteCommand = $this->deleteCommand ?? new DeleteCommand($this->repository);
-    }
+        private DeleteArticleCommand $deleteCommand,
+        private LoggerInterface $logger
+    ){}
 
     public function handle(Request $request): Response
     {
@@ -35,8 +30,9 @@ class DeleteArticle implements ActionInterface
             );
 
             $this->deleteCommand->handle($article);
-        } catch (HttpException|CommandException $exception) {
-            return new ErrorResponse($exception->getMessage());
+        } catch (HttpException|CommandException $e) {
+            $this->logger->warning($e->getMessage());
+            return new ErrorResponse($e->getMessage());
         }
 
         return new SuccessfulResponse([
