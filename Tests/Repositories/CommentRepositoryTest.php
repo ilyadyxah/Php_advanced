@@ -13,15 +13,18 @@ use App\Exceptions\CommentNotFoundException;
 use App\Repositories\CommentRepository;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
 class CommentRepositoryTest extends TestCase
 {
+    use LoggerTrait;
+
     public function testItThrowsAnExceptionWhenCommentNotFound(): void
     {
         $statementStub = $this->createStub(PDOStatement::class);
         $statementStub->method('fetch')->willReturn(false);
 
-        $repository = new CommentRepository($this->getConnectionStub()->getConnection());
+        $repository = new CommentRepository($this->getLogger(), $this->getConnectionStub()->getConnection());
 
         $this->expectException(CommentNotFoundException::class);
         $this->expectExceptionMessage('Cannot find comment');
@@ -31,8 +34,8 @@ class CommentRepositoryTest extends TestCase
 
     public function testItSavesCommentToDatabase(): void
     {
-        $repository = new CommentRepository($this->getConnectionStub()->getConnection());
-        $createCommand = new CreateCommentCommand($repository);
+        $repository = new CommentRepository($this->getLogger(), $this->getConnectionStub()->getConnection());
+        $createCommand = new CreateCommentCommand($repository, $this->getLogger());
 
         $this->expectException(CommandException::class);
         $this->expectExceptionMessage('Comment already exists');

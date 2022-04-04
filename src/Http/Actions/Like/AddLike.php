@@ -11,19 +11,14 @@ use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\Response;
 use App\Http\SuccessfulResponse;
-use App\Repositories\LikeRepository;
-use App\Repositories\LikeRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class AddLike implements ActionInterface
 {
     public function __construct(
-        private ?LikeRepositoryInterface $likeRepository = null,
-        private ?AddLikeCommand $addLikeCommand = null
-    )
-    {
-        $this->likeRepository = $this->likeRepository ?? new LikeRepository();
-        $this->addLikeCommand = $this->addLikeCommand ?? new AddLikeCommand($this->likeRepository);
-    }
+        private LoggerInterface $logger,
+        private AddLikeCommand $addLikeCommand
+    ) {}
 
     public function handle(Request $request): Response
     {
@@ -34,15 +29,18 @@ class AddLike implements ActionInterface
                     $request->jsonBodyField('userId'),
                     $request->jsonBodyField('like'),
                 );
-            } catch (HttpException $exception) {
-                return new ErrorResponse($exception->getMessage());
+            } catch (HttpException $e) {
+                $this->logger->error($e->getMessage());
+                return new ErrorResponse($e->getMessage());
             }
 
             try {
                 $this->addLikeCommand->handle($like);
-            } catch (CommandException $exception) {
-                return new ErrorResponse($exception->getMessage());
+            } catch (CommandException $e) {
+                return new ErrorResponse($e->getMessage());
             }
+
+            $this->logger->info('Like created');
 
             return new SuccessfulResponse([
                 'articleId' => $like->getArticleId(),

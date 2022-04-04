@@ -2,24 +2,37 @@
 
 namespace App\Repositories;
 
+use App\Drivers\Connection;
 use App\Entities\EntityInterface;
 use App\Entities\Article\Article;
 use App\Exceptions\ArticleNotFoundException;
 use PDO;
 use PDOStatement;
+use Psr\Log\LoggerInterface;
 
 class ArticleRepository extends EntityRepository implements ArticleRepositoryInterface
 {
+    private LoggerInterface $logger;
+
+    public function __construct(
+        LoggerInterface $logger,
+        ?Connection     $connection = null,
+    )
+    {
+        parent::__construct($connection);
+        $this->logger = $logger;
+    }
+
     /**
      * @param EntityInterface $entity
      * @return void
      */
-    public function save(EntityInterface $entity):void
+    public function save(EntityInterface $entity): void
     {
         /**
          * @var Article $entity
          */
-        $statement =  $this->connection
+        $statement = $this->connection
             ->prepare("INSERT INTO articles (author_id, title, text) 
                 VALUES (:author_id, :title, :text)");
 
@@ -32,12 +45,12 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
         );
     }
 
-    public function delete($id):void
+    public function delete($id): void
     {
         /**
          * @var Article $entity
          */
-        $statement =  $this->connection
+        $statement = $this->connection
             ->prepare("DELETE FROM articles WHERE `id` = :id");
 
         $statement->execute(
@@ -88,9 +101,10 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if (false === $result) {
+            $this->logger->error('Article not found');
             throw new ArticleNotFoundException("Cannot find article");
         }
 
-        return new Article(1, 1, 1);
+        return new Article($result['author_id'], $result['title'], $result['text']);
     }
 }

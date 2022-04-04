@@ -9,8 +9,13 @@ use App\Http\Actions\Comment\FindCommentById;
 use App\Http\Actions\Like\AddLike;
 use App\Http\ErrorResponse;
 use App\Http\Request;
+use Psr\Log\LoggerInterface;
 
 $container = require __DIR__ . '/bootstrap.php';
+/**
+ * @var LoggerInterface $logger
+ */
+$logger = $container->get(LoggerInterface::class);
 
 $request = new Request(
     $_GET,
@@ -20,14 +25,16 @@ $request = new Request(
 
 try {
     $path = $request->path();
-} catch (HttpException) {
+} catch (HttpException $e) {
+    $logger->warning($e->getMessage());
     (new ErrorResponse)->send();
     return;
 }
 
 try {
     $method = $request->method();
-} catch (HttpException) {
+} catch (HttpException $e) {
+    $logger->warning($e->getMessage());
     (new ErrorResponse)->send();
     return;
 }
@@ -48,11 +55,13 @@ $routes = [
 ];
 
 if (!array_key_exists($method, $routes)) {
+    $logger->info(sprintf('Клиент с IP-адресом :%s пытался получить несуществующий роут', $_SERVER['REMOTE_ADDR']));
     (new ErrorResponse('Not found'))->send();
     return;
 }
 
 if (!array_key_exists($path, $routes[$method])) {
+    $logger->info(sprintf('Клиент с IP-адресом :%s пытался получить несуществующий роут', $_SERVER['REMOTE_ADDR']));
     (new ErrorResponse('Not found'))->send();
     return;
 }
@@ -63,6 +72,7 @@ $action = $container->get($actionClassName);
 try {
     $response = $action->handle($request);
 } catch (Exception $e) {
+    $logger->error($e->getMessage());
     (new ErrorResponse($e->getMessage()))->send();
 }
 

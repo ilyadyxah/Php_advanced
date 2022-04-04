@@ -3,19 +3,21 @@
 namespace Tests\Container;
 
 use App\Config\SqlLiteConfig;
-use App\Container\DIContainer;
 use App\Drivers\Connection;
 use App\Drivers\PdoConnectionDriver;
 use App\Exceptions\NotFoundException;
 use App\Repositories\UserRepository;
 use App\Repositories\UserRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
 class DIContainerTest extends TestCase
 {
+    use LoggerTrait;
+
     public function testItThrowsAnExceptionIfCannotResolveType(): void
     {
-        $container = $this->getDIContainer();
+        $container = $this->getContainer();
 
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage(
@@ -27,7 +29,7 @@ class DIContainerTest extends TestCase
 
     public function testItResolvesClassWithoutDependencies(): void
     {
-        $container = $this->getDIContainer();
+        $container = $this->getContainer();
 
         $object = $container->get(SomeClassWithoutDependencies::class);
 
@@ -39,7 +41,7 @@ class DIContainerTest extends TestCase
 
     public function testItResolvesClassByContract(): void
     {
-        $container = $this->getDIContainer();
+        $container = $this->getContainer();
 
         $container->bind(
             UserRepositoryInterface::class,
@@ -57,7 +59,7 @@ class DIContainerTest extends TestCase
 
     public function testItReturnsPredefinedObject(): void
     {
-        $container = $this->getDIContainer();
+        $container = $this->getContainer();
 
         $container->bind(
             SomeClassWithParameter::class,
@@ -78,7 +80,7 @@ class DIContainerTest extends TestCase
 
     public function testItResolvesClassWithDependencies(): void
     {
-        $container = $this->getDIContainer();
+        $container = $this->getContainer();
 
         $container->bind(
             SomeClassWithParameter::class,
@@ -94,14 +96,9 @@ class DIContainerTest extends TestCase
         );
     }
 
-    private function getDIContainer(): DIContainer
-    {
-        return DIContainer::getInstance();
-    }
-
     private function bindConnection(): void
     {
-        $container = $this->getDIContainer();
+        $container = $this->getContainer();
         $container->bind(
             Connection::class,
             PdoConnectionDriver::getInstance(SqlLiteConfig::DSN)

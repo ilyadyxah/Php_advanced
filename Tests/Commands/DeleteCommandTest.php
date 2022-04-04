@@ -9,6 +9,7 @@ use App\Exceptions\ArticleNotFoundException;
 use App\Exceptions\CommandException;
 use App\Repositories\ArticleRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
 class DeleteCommandTest extends TestCase
 {

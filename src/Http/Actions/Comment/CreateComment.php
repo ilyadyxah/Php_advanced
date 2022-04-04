@@ -11,18 +11,14 @@ use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\Response;
 use App\Http\SuccessfulResponse;
-use App\Repositories\CommentRepository;
+use Psr\Log\LoggerInterface;
 
 class CreateComment implements ActionInterface
 {
     public function __construct(
-        private ?CommentRepository $repository = null,
-        private ?CreateCommentCommand     $createCommand = null
-    )
-    {
-        $this->repository = $this->repository ?? new CommentRepository();
-        $this->createCommand = $this->createCommand ?? new CreateCommentCommand($this->repository);
-    }
+        private CreateCommentCommand $createCommand,
+        private LoggerInterface $logger
+    ) {}
 
     public function handle(Request $request): Response
     {
@@ -34,8 +30,9 @@ class CreateComment implements ActionInterface
             );
 
             $this->createCommand->handle($comment);
-        } catch (HttpException|CommandException $exception) {
-            return new ErrorResponse($exception->getMessage());
+        } catch (HttpException|CommandException $e) {
+            $this->logger->warning($e->getMessage());
+            return new ErrorResponse($e->getMessage());
         }
 
         return new SuccessfulResponse([

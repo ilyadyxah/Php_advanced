@@ -11,9 +11,11 @@ use App\Http\Request;
 use App\Http\SuccessfulResponse;
 use App\Repositories\CommentRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
 class FindCommentByIdTest extends TestCase
 {
+    use LoggerTrait;
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
@@ -23,7 +25,7 @@ class FindCommentByIdTest extends TestCase
         $request = new Request([], [], '');
         $commentRepository = $this->getCommentRepository([]);
 
-        $action = new FindCommentById($commentRepository);
+        $action = new FindCommentById($commentRepository, $this->getLogger());
         $response = $action->handle($request);
 
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -44,7 +46,7 @@ class FindCommentByIdTest extends TestCase
         $request = new Request(['id' => '14'], [], '');
 
         $commentRepository = $this->getCommentrepository([]);
-        $action = new FindCommentById($commentRepository);
+        $action = new FindCommentById($commentRepository, $this->getLogger());
 
         $response = $action->handle($request);
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -69,7 +71,7 @@ class FindCommentByIdTest extends TestCase
             ),
         ]);
 
-        $action = new FindCommentById($commentRepository);
+        $action = new FindCommentById($commentRepository, $this->getLogger());
         $response = $action->handle($request);
 
         $this->assertInstanceOf(SuccessfulResponse::class, $response);

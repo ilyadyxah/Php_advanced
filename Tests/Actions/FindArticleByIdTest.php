@@ -11,9 +11,11 @@ use App\Http\Request;
 use App\Http\SuccessfulResponse;
 use App\Repositories\ArticleRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
 class FindArticleByIdTest extends TestCase
 {
+    use LoggerTrait;
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
@@ -23,7 +25,7 @@ class FindArticleByIdTest extends TestCase
         $request = new Request([], [], '');
         $articleRepository = $this->getArticleRepository([]);
 
-        $action = new FindArticleById($articleRepository);
+        $action = new FindArticleById($articleRepository, $this->getLogger());
         $response = $action->handle($request);
 
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -44,7 +46,7 @@ class FindArticleByIdTest extends TestCase
         $request = new Request(['id' => '125'], [], '');
 
         $articleRepository = $this->getArticleRepository([]);
-        $action = new FindArticleById($articleRepository);
+        $action = new FindArticleById($articleRepository, $this->getLogger());
 
         $response = $action->handle($request);
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -74,7 +76,7 @@ class FindArticleByIdTest extends TestCase
             ),
         ]);
 
-        $action = new FindArticleById($articleRepository);
+        $action = new FindArticleById($articleRepository, $this->getLogger());
         $response = $action->handle($request);
 
         $this->assertInstanceOf(SuccessfulResponse::class, $response);

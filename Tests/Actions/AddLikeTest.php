@@ -9,10 +9,11 @@ use App\Http\Request;
 use App\Http\SuccessfulResponse;
 use App\Repositories\LikeRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\LoggerTrait;
 
 class AddLikeTest extends TestCase
 {
-
+    use LoggerTrait;
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
@@ -28,7 +29,7 @@ class AddLikeTest extends TestCase
 
         $likeRepository = $this->getLikeRepository('');
 
-        $action = new AddLike($likeRepository);
+        $action = new AddLike($this->getLogger(), $likeRepository);
         $response = $action->handle($request);
 
         $this->assertInstanceOf(ErrorResponse::class, $response);
@@ -70,7 +71,7 @@ class AddLikeTest extends TestCase
         $request = $this->getRequest();
         $likeRepository = $this->getLikeRepository('Article');
 
-        $action = new AddLike($likeRepository);
+        $action = new AddLike($this->getLogger(), $likeRepository);
         $response = $action->handle($request);
 
         $this->assertInstanceOf(ErrorResponse::class, $response);
