@@ -29,7 +29,7 @@ class CommentRepositoryTest extends TestCase
         $this->expectException(CommentNotFoundException::class);
         $this->expectExceptionMessage('Cannot find comment');
 
-        $repository->get('234');
+        $repository->findById('234');
     }
 
     public function testItSavesCommentToDatabase(): void

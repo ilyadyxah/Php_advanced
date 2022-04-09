@@ -81,7 +81,7 @@ class LikeRepository extends EntityRepository implements LikeRepositoryInterface
         return $statement->fetch(PDO::FETCH_ASSOC)['id'] ?? false;
     }
 
-    public function get(int $id): EntityInterface
+    public function findById(int $id): EntityInterface
     {
         // TODO: Implement get() method.
     }

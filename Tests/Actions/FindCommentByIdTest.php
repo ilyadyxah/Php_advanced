@@ -98,7 +98,7 @@ class FindCommentByIdTest extends TestCase
             {
             }
 
-            public function get(int $id): EntityInterface
+            public function findById(int $id): EntityInterface
             {
                 foreach ($this->comments as $comment) {
                     if ($comment instanceof Comment && $id === $comment->getId()) {

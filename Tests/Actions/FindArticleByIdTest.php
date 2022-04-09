@@ -103,7 +103,7 @@ class FindArticleByIdTest extends TestCase
             {
             }
 
-            public function get(int $id): EntityInterface
+            public function findById(int $id): EntityInterface
             {
                 foreach ($this->articles as $article) {
                     if ($article instanceof Article && $id === $article->getId()) {

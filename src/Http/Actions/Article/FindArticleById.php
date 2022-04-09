@@ -29,7 +29,7 @@ class FindArticleById implements ActionInterface
             return new ErrorResponse($e->getMessage());
         }
         try {
-            $article = $this->repository->get($id);
+            $article = $this->repository->findById($id);
         } catch (UserNotFoundException $e) {
             $this->logger->warning($e->getMessage());
             return new ErrorResponse($e->getMessage());

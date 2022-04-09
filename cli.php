@@ -69,3 +69,5 @@ try {
     echo $exception->getMessage() . PHP_EOL;
     http_response_code(404);
 }
+
+echo new DateTimeImmutable("now");

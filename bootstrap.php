@@ -1,11 +1,24 @@
 <?php
 
-use App\config\SqlLiteConfig;
+use App\Commands\TokenCommandHandler;
+use App\Commands\TokenCommandHandlerInterface;
+use App\Commands\UpdateTokenCommandHandler;
+use App\Commands\UpdateTokenCommandHandlerInterface;
 use App\Container\DIContainer;
 use App\Drivers\Connection;
 use App\Drivers\PdoConnectionDriver;
+use App\Http\Auth\BearerTokenAuthentication;
+use App\Http\Auth\IdentificationInterface;
+use App\Http\Auth\JsonBodyUserEmailIdentification;
+use App\Http\Auth\PasswordAuthentication;
+use App\Http\Auth\PasswordAuthenticationInterface;
+use App\Http\Auth\TokenAuthenticationInterface;
+use App\Queries\TokenQueryHandler;
+use App\Queries\TokenQueryHandlerInterface;
 use App\Repositories\ArticleRepository;
 use App\Repositories\ArticleRepositoryInterface;
+use App\Repositories\AuthTokensRepository;
+use App\Repositories\AuthTokensRepositoryInterface;
 use App\Repositories\CommentRepository;
 use App\Repositories\CommentRepositoryInterface;
 use App\Repositories\LikeRepository;
@@ -49,6 +62,41 @@ $container->bind(
 $container->bind(
     Connection::class,
     PdoConnectionDriver::getInstance($_SERVER['DSN_DATABASE'])
+);
+
+$container->bind(
+    AuthTokensRepositoryInterface::class,
+    AuthTokensRepository::class
+);
+
+$container->bind(
+    IdentificationInterface::class,
+    JsonBodyUserEmailIdentification::class
+);
+
+$container->bind(
+    PasswordAuthenticationInterface::class,
+    PasswordAuthentication::class
+);
+
+$container->bind(
+    TokenAuthenticationInterface::class,
+    BearerTokenAuthentication::class
+);
+
+$container->bind(
+    TokenQueryHandlerInterface::class,
+    TokenQueryHandler::class
+);
+
+$container->bind(
+    TokenCommandHandlerInterface::class,
+    TokenCommandHandler::class
+);
+
+$container->bind(
+    UpdateTokenCommandHandlerInterface::class,
+    UpdateTokenCommandHandler::class
 );
 
 $logger = new Logger('geekbrains');

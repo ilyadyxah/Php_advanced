@@ -153,7 +153,7 @@ class AddLikeTest extends TestCase
                 return !($this->exception === 'User');
             }
 
-            public function get(int $id): EntityInterface
+            public function findById(int $id): EntityInterface
             {
                 // TODO: Implement get() method.
             }

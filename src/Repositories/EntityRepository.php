@@ -15,5 +15,5 @@ abstract class EntityRepository implements EntityRepositoryInterface
     }
 
     abstract public function save(EntityInterface $entity):void;
-    abstract public function get(int  $id): EntityInterface;
+    abstract public function findById(int $id): EntityInterface;
 }
