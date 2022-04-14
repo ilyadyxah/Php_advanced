@@ -21,7 +21,7 @@ class CreateCommentCommand implements CommandHandlerInterface
      */
     public function handle(EntityInterface $entity): void
     {
-        $this->logger->info('Create article command started');
+        $this->logger->info('Create comment command started');
         $commentId = $this->commentRepository->getId($entity);
 
         if ($commentId) {

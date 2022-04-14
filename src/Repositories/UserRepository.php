@@ -61,6 +61,17 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         return $statement->fetch(PDO::FETCH_ASSOC)['id'] ?? false;
     }
 
+    public function getCount()
+    {
+        $statement = $this->connection->prepare(
+            'SELECT COUNT(*) FROM users'
+        );
+
+        $statement->execute();
+
+        return $statement->fetch(PDO::FETCH_ASSOC)['COUNT(*)'] ?? false;
+    }
+
     public function getUserByEmail(string $email): User
     {
         $statement = $this->connection->prepare(

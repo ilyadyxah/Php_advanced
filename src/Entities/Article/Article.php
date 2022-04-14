@@ -2,8 +2,6 @@
 
 namespace App\Entities\Article;
 
-use App\Entities\User\User;
-
 class Article implements ArticleInterface
 {
 
@@ -33,6 +31,11 @@ class Article implements ArticleInterface
     public function getText(): string
     {
         return $this->text;
+    }
+
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
     }
 
     public function __toString(): string
