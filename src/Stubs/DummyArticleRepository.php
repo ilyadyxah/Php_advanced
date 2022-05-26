@@ -24,7 +24,7 @@ class DummyArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function get(int $id): EntityInterface
+    public function findById(int $id): EntityInterface
     {
         throw new ArticleNotFoundException('Not found');
     }

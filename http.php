@@ -6,7 +6,10 @@ use App\Http\Actions\Article\FindArticleById;
 use App\Http\Actions\Comment\CreateComment;
 use App\Http\Actions\Comment\DeleteComment;
 use App\Http\Actions\Comment\FindCommentById;
+use App\Http\Actions\CreateUser;
 use App\Http\Actions\Like\AddLike;
+use App\Http\Actions\LogIn;
+use App\Http\Actions\LogOut;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 use Psr\Log\LoggerInterface;
@@ -16,6 +19,8 @@ $container = require __DIR__ . '/bootstrap.php';
  * @var LoggerInterface $logger
  */
 $logger = $container->get(LoggerInterface::class);
+
+print_r(new DateTimeImmutable());
 
 $request = new Request(
     $_GET,
@@ -51,6 +56,9 @@ $routes = [
         '/comment/create' => CreateComment::class,
         '/comment/delete' => DeleteComment::class,
         '/like/add' => AddLike::class,
+        '/user/create' => CreateUser::class,
+        '/login' => LogIn::class,
+        '/logOut' => LogOut::class,
     ],
 ];
 

@@ -36,7 +36,7 @@ class ArticleRepositoryTest extends TestCase
         $this->expectException(ArticleNotFoundException::class);
         $this->expectExceptionMessage('Cannot find article');
 
-        $repository->get('432321');
+        $repository->findById('432321');
     }
 
     public function testItSavesArticleToDatabase(): void

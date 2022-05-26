@@ -81,7 +81,7 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
     /**
      * @throws ArticleNotFoundException
      */
-    public function get(int $id): Article
+    public function findById(int $id): Article
     {
         $statement = $this->connection->prepare(
             'SELECT * FROM articles WHERE id = :id'
@@ -94,17 +94,36 @@ class ArticleRepository extends EntityRepository implements ArticleRepositoryInt
         return $this->getArticle($statement);
     }
 
+    public function findByTitle(string $title): Article
+    {
+        $statement = $this->connection->prepare(
+            'SELECT * FROM articles WHERE title = :title'
+        );
+
+        $statement->execute([
+            ':title' => (string)$title,
+        ]);
+
+        return $this->getArticle($statement);
+    }
+
     /**
      * @throws ArticleNotFoundException
      */
     private function getArticle(PDOStatement $statement): Article
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
-        if (false === $result) {
+        if (!$result) {
             $this->logger->error('Article not found');
             throw new ArticleNotFoundException("Cannot find article");
         }
+        $article = new Article(
+            $result['author_id'],
+            $result['title'],
+            $result['text']);
 
-        return new Article($result['author_id'], $result['title'], $result['text']);
+        $article->setId($result['id']);
+
+        return $article;
     }
 }

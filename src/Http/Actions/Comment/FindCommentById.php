@@ -30,7 +30,7 @@ class FindCommentById implements ActionInterface
         }
 
         try {
-            $comment = $this->repository->get($id);
+            $comment = $this->repository->findById($id);
         } catch (UserNotFoundException $e) {
             $this->logger->warning($e->getMessage());
             return new ErrorResponse($e->getMessage());

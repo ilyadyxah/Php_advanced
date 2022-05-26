@@ -43,7 +43,7 @@ class DeleteCommandTest extends TestCase
                 // TODO: Implement save() method.
             }
 
-            public function get(int $id): EntityInterface
+            public function findById(int $id): EntityInterface
             {
                 throw new ArticleNotFoundException('Not found');
             }

@@ -15,9 +15,10 @@ class DIContainer implements ContainerInterface
 
     private array $resolvers = [];
 
-    public function bind(string $type, string|object $class)
+    public function bind(string $type, string|object $class):self
     {
         $this->resolvers[$type] = $class;
+        return $this;
     }
 
     public function get(string $type): object
@@ -35,7 +36,6 @@ class DIContainer implements ContainerInterface
         if (!class_exists($type)) {
             throw new NotFoundException("Cannot resolve type: $type");
         }
-
 
         $reflectionClass = new ReflectionClass($type);
         $constructor = $reflectionClass->getConstructor();
@@ -61,6 +61,7 @@ class DIContainer implements ContainerInterface
         try {
             $this->get($type);
         } catch (NotFoundException $e) {
+
             return false;
         }
     }

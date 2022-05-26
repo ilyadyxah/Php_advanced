@@ -4,9 +4,12 @@ namespace App\Http\Actions\Article;
 
 use App\Commands\CreateArticleCommand;
 use App\Entities\Article\Article;
+use App\Exceptions\AuthException;
 use App\Exceptions\CommandException;
 use App\Exceptions\HttpException;
 use App\Http\Actions\ActionInterface;
+use App\Http\Auth\PasswordAuthentication;
+use App\Http\Auth\PasswordAuthenticationInterface;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\Response;
@@ -17,11 +20,19 @@ class CreateArticle implements ActionInterface
 {
     public function __construct(
         private CreateArticleCommand $createCommand,
+        private PasswordAuthenticationInterface $passwordAuthentication,
         private LoggerInterface $logger
     ){}
 
     public function handle(Request $request): Response
     {
+        try {
+            $author = $this->passwordAuthentication->getUser($request);
+            $this->logger->info("Пользователь аутентифицирован");
+        } catch (HttpException|AuthException $e) {
+            return new ErrorResponse($e->getMessage());
+        }
+
         try {
             $article = new Article(
                 $request->jsonBodyField('authorId'),
